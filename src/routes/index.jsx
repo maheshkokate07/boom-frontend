@@ -6,6 +6,7 @@ import Login from "../pages/Login";
 import Layout from "../components/Layout";
 import { Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoutes from "./ProtectedRoutes";
+import Register from "../pages/Register";
 
 const AppRoutes = () => {
 
@@ -17,6 +18,10 @@ const AppRoutes = () => {
                 <Route
                     path="/login"
                     element={!isAuthenticated ? <Login /> : <Navigate to="/home" />}
+                />
+                <Route
+                    path="/register"
+                    element={!isAuthenticated ? <Register /> : <Navigate to="/home" />}
                 />
                 <Route element={<ProtectedRoutes />}>
                     <Route path="/home" element={<Home />} />

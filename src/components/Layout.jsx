@@ -5,7 +5,7 @@ const Layout = ({ children }) => {
         <div className="h-screen overflow-hidden">
             <Header />
             <div className="pt-[56px] h-[calc(100vh-56px)]">
-                <main className="overflow-y-scroll">{children}</main>
+                <main className="overflow-y-scroll hide-scrollbar">{children}</main>
             </div>
         </div>
     );

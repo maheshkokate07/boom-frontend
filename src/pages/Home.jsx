@@ -51,28 +51,25 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchVideos } from "../store/slices/videoSlice";
-import { FaArrowUp } from "react-icons/fa6";
-import { FaArrowDown } from "react-icons/fa6";
-import { AiFillLike, AiFillDislike } from "react-icons/ai";
-import { MdInsertComment } from "react-icons/md";
-import { IoIosShareAlt } from "react-icons/io";
-import { FiMoreVertical } from "react-icons/fi";
+import { FaArrowUp, FaArrowDown } from "react-icons/fa6";
 import VideoCard from "../components/VideoCard";
+import { debounce } from "../utils/debounce";
 
 function Home() {
     const dispatch = useDispatch();
     const { videos, loading } = useSelector((state) => state.videos);
-    const { userId } = useSelector(state => state.auth.user.data);
+    const { userId } = useSelector((state) => state.auth.user.data);
     const videoRefs = useRef([]);
     const containerRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    // Fetch videos on mount
+    // Fetch videos once on mount
     useEffect(() => {
+        console.log("In")
         dispatch(fetchVideos());
     }, [dispatch]);
 
-    // Auto play/pause videos in view
+    // Auto play/pause when video enters view
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
@@ -99,11 +96,11 @@ function Home() {
         };
     }, [videos]);
 
-    // Scroll to video at currentIndex when it changes
+    // Scroll to the current video when index changes
     useEffect(() => {
         if (!containerRef.current) return;
         const container = containerRef.current;
-        const videoHeight = container.clientHeight; // height of visible container
+        const videoHeight = container.clientHeight;
 
         container.scrollTo({
             top: currentIndex * videoHeight,
@@ -111,7 +108,23 @@ function Home() {
         });
     }, [currentIndex]);
 
-    // Handle button clicks
+    // Handle scroll to update currentIndex (debounced)
+    useEffect(() => {
+        const container = containerRef.current;
+        if (!container) return;
+
+        const handleScroll = debounce(() => {
+            const scrollTop = container.scrollTop;
+            const containerHeight = container.clientHeight;
+            const newIndex = Math.round(scrollTop / containerHeight);
+            setCurrentIndex(newIndex);
+        }, 100); // 100ms debounce
+
+        container.addEventListener("scroll", handleScroll);
+        return () => container.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    // Handle up/down button clicks
     const handleUp = () => {
         setCurrentIndex((prev) => Math.max(prev - 1, 0));
     };
@@ -122,19 +135,19 @@ function Home() {
 
     if (loading) {
         return (
-            <div className="text-center text-md mt-3 mb-5 w-full font-semibold">
-                Fetching latest videos...
+            <div className="flex flex-col items-center justify-center w-full font-semibold text-gray-100 bg-[#0f0f0f] h-[calc(100vh-56px)]">
+                <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-3"></div>
+                <p>Fetching latest videos...</p>
             </div>
         );
     }
 
-    const isLiked = true;
-
     return (
         <>
+            {/* Scrollable vertical container */}
             <div
                 ref={containerRef}
-                className="overflow-y-scroll snap-y snap-mandatory hide-scrollbar bg-black"
+                className="overflow-y-scroll snap-y snap-mandatory hide-scrollbar bg-[#0f0f0f]"
                 style={{
                     height: "calc(100vh - 56px)",
                     paddingBottom: "56px",
@@ -143,19 +156,22 @@ function Home() {
                 }}
             >
                 {videos.map((video, index) => (
-                    <VideoCard
+                    <div
                         key={video._id}
-                        video={video}
-                        index={index}
-                        videoRef={(el) => (videoRefs.current[index] = el)}
-                        userId={userId}
-                    />
+                        className="snap-start h-[calc(100vh-56px)] w-full flex justify-center items-center"
+                    >
+                        <VideoCard
+                            video={video}
+                            index={index}
+                            videoRef={(el) => (videoRefs.current[index] = el)}
+                            userId={userId}
+                        />
+                    </div>
                 ))}
             </div>
 
-
             {/* Up / Down buttons */}
-            <div className="fixed right-10 top-1/2 transform -translate-y-1/2 hidden sm:flex flex-col space-y-4 z-20 " >
+            <div className="fixed right-10 top-1/2 transform -translate-y-1/2 hidden sm:flex flex-col space-y-4 z-20">
                 <button
                     onClick={handleUp}
                     disabled={currentIndex === 0}

@@ -2,16 +2,16 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { decodeToken } from "../../utils/decodeJwt";
 import axios from "axios";
 
+const config = {
+    headers: {
+        "Content-Type": "application/json",
+    },
+};
+
 export const loginUser = createAsyncThunk(
     "auth/loginUser",
 
     async (credentials, { rejectWithValue }) => {
-        const config = {
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }
-
         try {
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, credentials, config);
             console.log(response);
@@ -36,6 +36,27 @@ export const loginUser = createAsyncThunk(
         }
     }
 )
+
+export const registerUser = createAsyncThunk(
+    "auth/registerUser",
+    async (credentials, { rejectWithValue }) => {
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/register`, credentials, config);
+            const { token } = response.data;
+
+            if (!token) return rejectWithValue("Invalid token received from server");
+
+            const decodedToken = decodeToken(token);
+            if (decodedToken) {
+                return { token, decodedToken };
+            }
+
+            return rejectWithValue("Invalid token");
+        } catch (err) {
+            return rejectWithValue(err.response?.data?.message || "Registration failed");
+        }
+    }
+);
 
 const authSlice = createSlice({
     name: "auth",
@@ -82,6 +103,23 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
+            .addCase(registerUser.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(registerUser.fulfilled, (state, action) => {
+                const { token, decodedToken } = action.payload;
+                state.user.token = token;
+                state.user.data = decodedToken;
+                state.user.isAuthenticated = true;
+                state.loading = false;
+                state.error = null;
+            })
+            .addCase(registerUser.rejected, (state, action) => {
+                state.user.isAuthenticated = false;
+                state.loading = false;
+                state.error = action.payload;
+            });
     }
 })
 
