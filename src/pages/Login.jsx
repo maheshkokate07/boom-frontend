@@ -47,7 +47,6 @@ const Login = () => {
                 {error && <p className="text-red-400 mb-4 text-center">{error}</p>}
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                    {/* Email Input */}
                     <input
                         type="email"
                         name="email"
@@ -58,7 +57,6 @@ const Login = () => {
                         required
                     />
 
-                    {/* Password Input */}
                     <input
                         type="password"
                         name="password"
@@ -69,7 +67,6 @@ const Login = () => {
                         required
                     />
 
-                    {/* Login Button */}
                     <button
                         type="submit"
                         disabled={loading}

@@ -38,12 +38,11 @@ function VideoCard({ video, index, videoRef, userId }) {
                     src={video.videoUrl}
                     className="max-w-[320px] h-full object-cover rounded-lg"
                     loop
-                    // muted
+                    muted
                     playsInline
                     controls={false}
                 />
 
-                {/* Bottom-left Video Info */}
                 <div className="absolute left-5 bottom-5 sm:left-0 text-white z-10 p-2 rounded-md">
                     <p className="font-semibold text-lg truncate">
                         @{video.uploader?.username || "unknown"}
@@ -51,7 +50,6 @@ function VideoCard({ video, index, videoRef, userId }) {
                     <p className="text-sm truncate">{video.title}</p>
                 </div>
 
-                {/* Right-side Buttons */}
                 <div className="absolute sm:relative right-0 bottom-20 sm:bottom-15 h-[90%] p-4 flex flex-col items-center justify-end gap-4 text-white z-10">
                     <div
                         onClick={handleLike}

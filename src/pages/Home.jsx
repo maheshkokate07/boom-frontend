@@ -63,13 +63,11 @@ function Home() {
     const containerRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    // Fetch videos once on mount
     useEffect(() => {
         console.log("In")
         dispatch(fetchVideos());
     }, [dispatch]);
 
-    // Auto play/pause when video enters view
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
@@ -96,7 +94,6 @@ function Home() {
         };
     }, [videos]);
 
-    // Scroll to the current video when index changes
     useEffect(() => {
         if (!containerRef.current) return;
         const container = containerRef.current;
@@ -108,7 +105,6 @@ function Home() {
         });
     }, [currentIndex]);
 
-    // Handle scroll to update currentIndex (debounced)
     useEffect(() => {
         const container = containerRef.current;
         if (!container) return;
@@ -118,13 +114,12 @@ function Home() {
             const containerHeight = container.clientHeight;
             const newIndex = Math.round(scrollTop / containerHeight);
             setCurrentIndex(newIndex);
-        }, 100); // 100ms debounce
+        }, 100);
 
         container.addEventListener("scroll", handleScroll);
         return () => container.removeEventListener("scroll", handleScroll);
     }, []);
 
-    // Handle up/down button clicks
     const handleUp = () => {
         setCurrentIndex((prev) => Math.max(prev - 1, 0));
     };
@@ -170,7 +165,6 @@ function Home() {
                 ))}
             </div>
 
-            {/* Up / Down buttons */}
             <div className="fixed right-10 top-1/2 transform -translate-y-1/2 hidden sm:flex flex-col space-y-4 z-20">
                 <button
                     onClick={handleUp}

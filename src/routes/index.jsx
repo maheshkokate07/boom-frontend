@@ -26,7 +26,6 @@ const AppRoutes = () => {
                 <Route element={<ProtectedRoutes />}>
                     <Route path="/home" element={<Home />} />
                     <Route path="/upload" element={<Upload />} />
-                    <Route path="/account" element={<Account />} />
                 </Route>
                 <Route path="*" element={<Navigate to="/home" />} />
             </Routes>

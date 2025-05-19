@@ -58,7 +58,6 @@ const Register = () => {
                         required
                     />
 
-                    {/* Email Input */}
                     <input
                         type="email"
                         name="email"
@@ -69,7 +68,6 @@ const Register = () => {
                         required
                     />
 
-                    {/* Password Input */}
                     <input
                         type="password"
                         name="password"
@@ -80,7 +78,6 @@ const Register = () => {
                         required
                     />
 
-                    {/* Login Button */}
                     <button
                         type="submit"
                         disabled={loading}
