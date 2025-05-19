@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import Home from "../pages/Home";
 import Upload from "../pages/Upload";
-import Account from "../pages/Account";
 import Login from "../pages/Login";
 import Layout from "../components/Layout";
 import { Navigate, Route, Routes } from "react-router-dom";

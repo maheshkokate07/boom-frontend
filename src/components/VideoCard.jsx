@@ -38,7 +38,7 @@ function VideoCard({ video, index, videoRef, userId }) {
                     src={video.videoUrl}
                     className="max-w-[320px] h-full object-cover rounded-lg"
                     loop
-                    muted
+                    // muted
                     playsInline
                     controls={false}
                 />
